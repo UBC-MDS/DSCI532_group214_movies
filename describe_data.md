@@ -1,12 +1,10 @@
 ### Describe the dataset:
 
-Who: The movies dataset is from the Vega dataset library, but I could not find anymore detailed information about which organization collected or organized the data.
+The movies dataset that we'll be working with to make this dashboard is from the [Vega dataset library](https://github.com/vega/vega-datasets). Unfortunately the Vega library does not have additional information about who specifically (which people or organizations) gathered the data.
 
-What: In this dataset, there is a collection of movies and information about those movies. The information is box office returns from the US and from around the world, US DVD sales numbers, the production budget of each movie (how much each movie cost to make, the running time of each movie in minutes, the "Rotten Tomatoes" rating, a score that tells you what percentage of critics who saw the movie liked it, IMDB Rating, which is the score from users of the website IMDB, and the release date (presumably the US release date).
+In the movies dataset, there is a wealth of information on thousands of movies. The information includes foreign and domestic box office returns, DVD sales, budgets (how much a movie cost to make),running times, ratings from the websites Rotten Tomatoes and IMDB, the release date, and more. One notable variable that the data does not have is opening weekend box office returns. This is one metric that studios and industry investors value highly and it is unfortunate that the dataset does not contain this information. 
 
-When: The data contains movies from 1915 to 2010 and incomplete information on a couple movies from 2011. There are some movies listed incorrectly as being released beyond 2015, but they are off by 100 years.
+The movies dataset includes movies from 1915 to 2010 and some information on a handful of movies from 2011. There are some movies in the dataset which are listed as having release dates from 2015 to 2046, but these were seemingly entered incorrectly and actually came out between 1915 and 1946. *Birth of a Nation* and *Gone with the Wind* are among the more notable of these incorrectly listed films. 
 
-Why: It seems like the purpose of the dataset is for people who are interested in movies to have a source of data where they can look up information easily.
-
-How: As to how the data was collected, I could not find information on that.
+Unfortunately, we do not have information on how exactly the data in the dataset was collected, nor do we have information about who collected the data.
 
