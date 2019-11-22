@@ -1,14 +1,10 @@
 ## Proposal
 
-### Section 1
-
-#### Motivation and Purpose
+### Motivation and Purpose
 
 We would like to explore how the movie industry has developed over time, particularly regarding revenue streams, both domestic and worldwide, with respect to different genres. The film industry creates and provides entertainment for millions of people worldwide, and is worth a staggering amount of money. The global box office of all films in 2018 was over 41 billion USD, with almost 12 billion USD in just the US alone. This could be of particular interest to someone in the industry in Vancouver, as many movies -- blockbusters and indie films alike -- are shot in Vancouver; with production companies spending around 3.5 billion in 2018 in BC. This app would help illustrate the trends in consumer tastes in film, through box office figures, perceived quality by the audience through IMDB ratings, and how they are correlated with each other. Different filters and options provide ease of access to subset the data as the user likes.
 
-### Section 2 
-
-#### Describe the dataset
+### Describe the dataset
 
 The movies dataset that we'll be working with to make this dashboard is from the [Vega dataset library](https://github.com/vega/vega-datasets). Unfortunately the Vega library does not have additional information about who specifically (which people or organizations) gathered the data or how it was gathered.
 
@@ -16,9 +12,7 @@ In the `movies` dataset, there is a wealth of information on thousands of movies
 
 The `movies` dataset includes movies from 1915 to 2010 and some information on a handful of movies from 2011. There are some movies in the dataset which are listed as having release dates from 2015 to 2046, but these were seemingly entered incorrectly and actually came out between 1915 and 1946. *Birth of a Nation* and *Gone with the Wind* are among the more notable of these incorrectly listed films. 
 
-### Section 3
-
-#### Research Questions:
+### Research Questions:
 
 Some research questions that could be answered by this dashboard are: 
 
