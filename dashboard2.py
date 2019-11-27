@@ -3,13 +3,18 @@ import dash_core_components as dcc
 import dash_html_components as html
 from dash.dependencies import Input, Output
 import altair as alt
+from vega_datasets import data
 import vega_datasets
 app = dash.Dash(__name__, assets_folder='assets')
 server = app.server
 app.title = 'Dash app with pure Altair HTML'
 ## Magic happens here
 def make_plot(x_axis='US_Gross:Q',
-              y_axis='US_Gross:Q'):
+              y_axis='US_Gross:Q', 
+              years=[1915, 2010]):
+    movies = alt.UrlData(data.movies.url,
+    format=alt.DataFormat(parse={"Release_Date":"date"}))
+    # Attribution: https://altair-viz.github.io/gallery/multiple_interactions.html
     # Create a plot of the Displacement and the Horsepower of the cars dataset
     # Add theme here
     def mds_special():
@@ -69,7 +74,11 @@ def make_plot(x_axis='US_Gross:Q',
     # enable the newly registered theme
     alt.themes.enable('mds_special')
     #alt.themes.enable('none') # to return to default
-    chart = alt.Chart('https://raw.githubusercontent.com/vega/vega-datasets/master/data/movies.json').mark_circle(size=90).encode(
+    chart = alt.Chart(movies).mark_circle(size=90).transform_calculate(
+        Release_Year="year(datum.Release_Date)"
+        ).transform_filter(
+            filter="datum.Release_Year>{} & datum.Release_Year<{}".format(years[0], years[1])
+        ).encode(
                 alt.X(x_axis, 
                 title = x_axis.replace("_", " ")[:-2]),
                 alt.Y(y_axis,
@@ -140,7 +149,15 @@ def make_plot2(x_axis='US_Gross:Q',
     # enable the newly registered theme
     alt.themes.enable('mds_special')
     #alt.themes.enable('none') # to return to default
-    chart = alt.Chart('https://raw.githubusercontent.com/vega/vega-datasets/master/data/movies.json').mark_circle(size=90).encode(
+    movies = alt.UrlData(data.movies.url,
+    format=alt.DataFormat(parse={"Release_Date":"date"})
+    
+    # Attribution: https://altair-viz.github.io/gallery/multiple_interactions.html
+)
+
+    chart = alt.Chart(movies).mark_circle(size=90).transform_calculate(
+        Release_Year="year(datum.Release_Date)"
+        ).encode(
                 alt.X(x_axis, 
                 title = x_axis.replace("_", " ")[:-2]),
                 alt.Y(y_axis,
@@ -184,7 +201,7 @@ app.layout = html.Div([
             {'label': 'Worldwide Gross', 'value': 'Worldwide_Gross:Q'},
             {'label': 'US DVD Sales', 'value': 'US_DVD_Sales:Q'},
             {'label': 'US Gross', 'value': 'US_Gross:Q'},
-            {'label': 'Release Dates', 'value': 'Release_Date:O'},
+            {'label': 'Release Dates', 'value': 'Release_Year:O'},
 
         ],
         value='US_Gross:Q',
@@ -205,7 +222,7 @@ app.layout = html.Div([
         clearable=False
         ),
         dcc.RangeSlider(
-        id='year_slider',
+        id='year-slider',
         min=1900,
         max=2010,
         marks={i: '{}'.format(i) for i in range(1900, 2010, 5)},
@@ -216,14 +233,17 @@ app.layout = html.Div([
 @app.callback(
     dash.dependencies.Output('plot', 'srcDoc'),
     [dash.dependencies.Input('dd-chart', 'value'),
-     dash.dependencies.Input('dd-chart-y','value')])
+     dash.dependencies.Input('dd-chart-y','value'),
+     dash.dependencies.Input('year-slider', 'value')])
 def update_plot(xaxis_column_name,
-                yaxis_column_name):
+                yaxis_column_name,
+                year_filter):
     '''
     Takes in an xaxis_column_name and calls make_plot to update our Altair figure
     '''
     updated_plot = make_plot(xaxis_column_name,
-                             yaxis_column_name).to_html()
+                             yaxis_column_name,
+                             year_filter).to_html()
     return updated_plot
 
 @app.callback(
