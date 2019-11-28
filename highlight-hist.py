@@ -28,7 +28,7 @@ def make_plot(x_axis='US_Gross:Q',
                         width=500, height=350).interactive()
     return chart
 
-def make_plot2(year_slider = [1950, 2000],
+def make_highlight_hist(year_slider = [1950, 2000],
                 genre = "Comedy"):
 
     df = alt.UrlData(
@@ -81,15 +81,15 @@ app.layout = html.Div([
         srcDoc=make_plot().to_html()
         ################ The magic happens here
         ),
-        ############### Plot 2 ###########
+        ############### Plot 3 ###########
         html.Iframe(
         sandbox='allow-scripts',
-        id='plot2',
+        id='plot3',
         height='470',
         width='655',
         style={'border-width': '0'},
         ################ The magic happens here
-        srcDoc=make_plot2().to_html()
+        srcDoc=make_highlight_hist().to_html()
         ################ The magic happens here
         ),
         dcc.Dropdown(
@@ -163,18 +163,18 @@ def update_plot(xaxis_column_name,
     return updated_plot
 
 @app.callback(
-    dash.dependencies.Output('plot2', 'srcDoc'),
+    dash.dependencies.Output('plot3', 'srcDoc'),
     [dash.dependencies.Input('year_slider','value'),
     dash.dependencies.Input('genre_choice','value')])
-def update_plot2(year_slider,
+def update_plot3(year_slider,
                 genre_choice):
     '''
     Takes in an xaxis_column_name and calls make_plot to update our Altair figure
     '''
-    updated_plot2 = make_plot2(year_slider,
+    updated_3 = make_highlight_hist(year_slider,
                              genre_choice
                              ).to_html()
-    return updated_plot2
+    return updated_plot3
 
 if __name__ == '__main__':
     app.run_server(debug=True)
