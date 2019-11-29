@@ -7,6 +7,7 @@ import vega_datasets
 import pandas as pd
 import numpy as np
 from vega_datasets import data
+import dash_bootstrap_components as dbc
 alt.data_transformers.enable('json')
 
 df = pd.read_json('https://raw.githubusercontent.com/vega/vega-datasets/master/data/movies.json', orient = 'columns')
@@ -31,26 +32,75 @@ app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
         
     # )
 
+
+
+row = html.Div(
+    [
+        dbc.Row(dbc.Col(html.Div("Genre [Year1 Year2]"))),
+        dbc.Row(
+            [
+                dbc.Col(html.Div(id='slider-output-container-1')),
+                dbc.Col(html.Div(id='slider-output-container-2')),
+                dbc.Col(html.Div(id='slider-output-container-3')),
+            ]
+        ),
+    ]
+)
+
 app.layout = html.Div(children=[
     html.H4(children='Movies database - summary statistics'),
     #generate_table(df),
+    row,
     html.Div(dcc.RangeSlider(
         id='year_slider',
         min=1900,
         max=2010,
         marks={i: '{}'.format(i) for i in range(1930, 2010, 5)},
         value=[1950, 2000])), 
-    html.Div(id='slider-output-container'),
 ])
 
 @app.callback(
-    dash.dependencies.Output('slider-output-container', 'children'),
+    dash.dependencies.Output('slider-output-container-1', 'children'),
     [dash.dependencies.Input('year_slider', 'value')])
-def update_output(year_slider):
-    k = df[(df['Release_Date'] > year_slider[0][0]) & (df['Release_Date'] < year_slider[0][1]) ].sort_values(by = "US_Gross",ascending = False)
-    k_US_Gross = round(k.iloc[1,1]/1000000,3)
-    k_movie = k.iloc[1,0]
-    return (k_movie, "was the highest US grossing movie in the period", year_slider,"at",k_US_Gross, " M USD")
+def highest_grossing(value):
+    k = df[(df['Release_Date'] > value[0]) & (df['Release_Date'] < value[1]) ].sort_values(by = "US_Gross",ascending = False)
+    k_US_Gross = k.iloc[1].loc['US_Gross']/1000
+    k_movie = k.iloc[0].loc['Title']
+    a = "The highest grossing \n movie in the US was " + k_movie + " at " + str(k_US_Gross) + " M USD "
+    return a
+
+@app.callback(
+    dash.dependencies.Output('slider-output-container-2', 'children'),
+    [dash.dependencies.Input('year_slider', 'value')])
+def lowest_grossing(value):
+    k = df[(df['Release_Date'] > value[0]) & (df['Release_Date'] < value[1]) ].sort_values(by = "US_Gross",ascending = True)
+    k_US_Gross = k.iloc[1].loc['US_Gross']/1000
+    k_movie = k.iloc[0].loc['Title']
+    b = "The lowest grossing movie in the US was " + k_movie + " at " + str(k_US_Gross) + "K USD"
+    return b
+
+
+
+@app.callback(
+    dash.dependencies.Output('slider-output-container-3', 'children'),
+    [dash.dependencies.Input('year_slider', 'value')])
+def lowest_(year_info):
+    '''This function gives you the WW GRossing 
+    
+    Inputs :
+        year_info : Takes in the year information from the callback above
+        genre_input : (To be programmed) : takes in the genre information
+    '''
+
+    genre_input = 'Drama' #Implement as Callback
+    k = df[df['Major_Genre'] == genre_input]
+    k = df[(df['Release_Date'] > year_info[0]) & (df['Release_Date'] < year_info[1]) ].sort_values(by = "US_Gross",ascending = True)
+    k_US_Gross = k.iloc[1].loc['Worldwide_Gross']/1000
+    k_movie = k.iloc[0].loc['Title']
+    return "The lowest grossing movie WW was " + k_movie + " at " + str(k_US_Gross) + "K USD"
+
+    
+
 
 if __name__ == '__main__':
     app.run_server(debug=True)
