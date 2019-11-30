@@ -354,7 +354,7 @@ def biggest_success(year_info, genre_input):
         k = df[df['Major_Genre'] == genre_input]
     
     #Condition to have data between those years
-    k = (df[(df['Release_Date'] > year_info[0]) & (df['Release_Date'] < year_info[1]) ]
+    k = (k[(k['Release_Date'] > year_info[0]) & (k['Release_Date'] < year_info[1]) ]
      .sort_values(by = "US_Gross",ascending = False))
     k_WW_Gross = k.iloc[1].loc['Worldwide_Gross']/1000000
     k_movie = k.iloc[0].loc['Title']
@@ -381,13 +381,13 @@ def biggest_flop(year_info, genre_input):
         'The biggest worldwide flop was Men of War'
     
     '''
-    #Condition to wrangle based on 'Any' genre
+    #Condition to wrangle based on 'Any' genre 
     if genre_input != 'Any': 
         k = df[df['Major_Genre'] == genre_input]
     
     #Condition to have data between those years
-    k = (df[(df['Release_Date'] > year_info[0]) & (df['Release_Date'] < year_info[1]) ])
-    k['Profit'] = df['Worldwide_Gross'] - df['Production_Budget']
+    k = (k[(k['Release_Date'] > year_info[0]) & (k['Release_Date'] < year_info[1]) ])
+    k['Profit'] = k['Worldwide_Gross'] - k['Production_Budget']
     k = k.sort_values(by = "Profit")
     topflopgross = k.iloc[0].loc["Worldwide_Gross"] / 1000000
     topflopgross = round(topflopgross, 2)
