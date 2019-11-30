@@ -108,10 +108,9 @@ def make_highlight_hist(year_slider = [1950, 2000],
     ).transform_filter(
         alt.datum.Release_Year > year_slider[0]
     ).encode(
-        alt.X('Major_Genre:N', 
-            axis=alt.Axis(title='Genre',
-                        labelAngle=-20)),
-        alt.Y('count()'),
+        alt.Y('Major_Genre:N', 
+            axis=alt.Axis(title='Genre')),
+        alt.X('count()'),
         color=alt.condition(
                     alt.datum.Major_Genre == genre,
                         alt.value("orange"),
@@ -127,14 +126,20 @@ def make_highlight_hist(year_slider = [1950, 2000],
 jumbotron = dbc.Jumbotron(
     [
         dbc.Container(
-            [
-                 html.Img(src='https://i.imgur.com/36p2VrM.jpg', 
-                       width='100px'),
-                html.H1("Movies! Movies! Movies!", className="display-3"),
-                html.P(
-                    "Welcome to the movies dashboard",
-                    className="lead",
-                ),
+            [ dbc.Row([html.Img(src='https://i.imgur.com/N2UOAry.jpg',
+                       width='200px'),
+                html.H1("Interactive Movie Dashboard", className="display-3")]),
+                dbc.Col([
+            dbc.Row([html.Div("___________________________")]),
+            dbc.Row([html.Div("If you are nascent to investing in the movie industry, your search ends right here! As a new investor, there are 4 fundamental questions you must know to estimate what your money is worth.")]),
+            dbc.Row([html.Div("1. What genre has been most profitable?")]),
+            dbc.Row([html.Div("2. How much does audience reception affect profit?  ")]),
+            dbc.Row([html.Div("3. What are the most and least popular genres that producers typically engage in? ")]),
+            dbc.Row([html.Div("___________________________")]),
+            dbc.Row([html.Div("Welcome to our Interactive Movie Dashboard! It is quite simple and involves understanding 2 levers which will make your exploration fun and insightful.")]),
+            dbc.Row([html.Div("1. Use the slider to observe the evolution of the industry over the select time period.")]),
+            dbc.Row([html.Div("2. Use the drop down menu to look up the top XX genres")]),
+             ]),
             ],
             fluid=True,
         )
@@ -190,7 +195,7 @@ content = dbc.Container(
             {'label': 'Thriller', 'value': 'Thriller/Suspense'},
             {'label': 'Western', 'value': 'Western'}
         ],
-        value='Drama',
+        value='Action',
         clearable=False,
         #placeholder="Please choose a genre",
         style={'width':'100%', 'justify':'start'}
@@ -354,9 +359,9 @@ def biggest_success(year_info, genre_input):
         k = df[df['Major_Genre'] == genre_input]
     
     #Condition to have data between those years
-    k = (df[(df['Release_Date'] > year_info[0]) & (df['Release_Date'] < year_info[1]) ]
-     .sort_values(by = "US_Gross",ascending = False))
-    k_WW_Gross = k.iloc[1].loc['Worldwide_Gross']/1000000
+    k = (k[(k['Release_Date'] > year_info[0]) & (k['Release_Date'] < year_info[1]) ]
+     .sort_values(by = "Worldwide_Gross",ascending = False))
+    k_WW_Gross = k.iloc[0].loc['Worldwide_Gross']/1000000
     k_movie = k.iloc[0].loc['Title']
     return "The highest worldwide box office of genre type "  + genre_input + " over the years " + str(year_info[0]) + '-' + str(year_info[1])  + " was " + k_movie + " grossing " + str(round(k_WW_Gross, 2)) + " Million USD"
 
@@ -386,8 +391,8 @@ def biggest_flop(year_info, genre_input):
         k = df[df['Major_Genre'] == genre_input]
     
     #Condition to have data between those years
-    k = (df[(df['Release_Date'] > year_info[0]) & (df['Release_Date'] < year_info[1]) ])
-    k['Profit'] = df['Worldwide_Gross'] - df['Production_Budget']
+    k = (k[(k['Release_Date'] > year_info[0]) & (k['Release_Date'] < year_info[1]) ])
+    k['Profit'] = k['Worldwide_Gross'] - k['Production_Budget']
     k = k.sort_values(by = "Profit")
     topflopgross = k.iloc[0].loc["Worldwide_Gross"] / 1000000
     topflopgross = round(topflopgross, 2)
@@ -423,7 +428,7 @@ def how_big(year_info, genre_input):
         k = df[df['Major_Genre'] == genre_input]
     
     #Condition to have data between those years
-    k = df[(df['Release_Date'] > year_info[0]) & (df['Release_Date'] < year_info[1]) ]
+    k = k[(k['Release_Date'] > year_info[0]) & (k['Release_Date'] < year_info[1]) ]
     average_returns = round(np.sum(k['Worldwide_Gross'] - k['Production_Budget'])/1000000000,2)
     return ("The total worldwide box office of genre type " + genre_input + " over the years " 
             + str(year_info[0]) + '-' + str(year_info[1]) 
@@ -457,7 +462,7 @@ def average_returns(year_info, genre_input):
         k = df[df['Major_Genre'] == genre_input]
     
     #Condition to have data between those years
-    k = df[(df['Release_Date'] > year_info[0]) & (df['Release_Date'] < year_info[1]) ]
+    k = k[(k['Release_Date'] > year_info[0]) & (k['Release_Date'] < year_info[1]) ]
     average_returns = round(np.mean(k['Worldwide_Gross'] - k['Production_Budget'])/1000000,2)
     return ("The average return on investment of genre type " + genre_input + " over the years " 
             + str(year_info[0]) + '-' + str(year_info[1]) 
