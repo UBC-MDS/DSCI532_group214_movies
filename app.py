@@ -46,7 +46,7 @@ def make_barchart(
         alt.X('Release_Year:O', axis=alt.Axis(title='Year')),
         color = alt.Color("key:N", legend=alt.Legend(orient="bottom"))
     ).properties(
-        title = "Average Gross",
+        title = "Average Box Office",
         height = 300,
         width = 300
     )
@@ -83,7 +83,7 @@ def make_heatmap(
         alt.Y('Profit_Ratio:Q', bin = alt.Bin(maxbins = 50), axis = alt.Axis(title = 'Profit Ratio ((Gross - Budget)/Budget)')),
         alt.Color('count(Profit_Ratio):Q', scale=alt.Scale(scheme='greenblue'), legend=alt.Legend(orient="bottom"))
     ).properties(
-        title = "Average Gross",
+        title = "IMDb Ratings vs Profit Ratio",
         height = 300,
         width = 300
     )
@@ -110,13 +110,13 @@ def make_highlight_hist(year_slider = [1950, 2000],
     ).encode(
         alt.Y('Major_Genre:N', 
             axis=alt.Axis(title='Genre')),
-        alt.X('count()'),
+        alt.X('count()', axis=alt.Axis(title='# of Movies Produced')),
         color=alt.condition(
                     alt.datum.Major_Genre == genre,
                         alt.value("orange"),
                         alt.value("gray"))
     ).properties(
-        title = "Histogram of Genres",
+        title = "Popularity of Genres",
        width=300, 
        height=300
     )
