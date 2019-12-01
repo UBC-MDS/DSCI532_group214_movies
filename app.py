@@ -131,14 +131,16 @@ jumbotron = dbc.Jumbotron(
                 html.H1("Interactive Movie Dashboard", className="display-3")]),
                 dbc.Col([
             dbc.Row([html.Div("___________________________")]),
-            dbc.Row([html.Div("If you are nascent to investing in the movie industry, your search ends right here! As a new investor, there are 4 fundamental questions you must know to estimate what your money is worth.")]),
-            dbc.Row([html.Div("1. What genre has been most profitable?")]),
-            dbc.Row([html.Div("2. How much does audience reception affect profit?  ")]),
-            dbc.Row([html.Div("3. What are the most and least popular genres that producers typically engage in? ")]),
+            dbc.Row([html.Div("If you are nascent to investing in the movie industry, your search ends right here! As a new investor, there are several fundamental questions you would like answered:")]),
+            dbc.Row([html.Div("1. Which genres have been most profitable?")]),
+            dbc.Row([html.Div("2. How does audience reception affect profit? ")]),
+            dbc.Row([html.Div("3. What are the popularity levels of genres that typically produced? ")]),
             dbc.Row([html.Div("___________________________")]),
-            dbc.Row([html.Div("Welcome to our Interactive Movie Dashboard! It is quite simple and involves understanding 2 levers which will make your exploration fun and insightful.")]),
-            dbc.Row([html.Div("1. Use the slider to observe the evolution of the industry over the select time period.")]),
-            dbc.Row([html.Div("2. Use the drop down menu to look up the top XX genres")]),
+            dbc.Row([html.Div("Welcome to our Interactive Movie Dashboard!")]),
+            dbc.Row([html.Div("1. Use the slider to observe the evolution of the industry over the selected years.")]),
+            dbc.Row([html.Div("2. Use the drop down menu to filter for a specific genre.")]),
+            dbc.Row([html.Div("___________________________")]),
+            dbc.Row([html.Div("Data acquired from: https://raw.githubusercontent.com/vega/vega-datasets/master/data/movies.json.")]),
              ]),
             ],
             fluid=True,
@@ -359,7 +361,7 @@ def biggest_success(year_info, genre_input):
         k = df[df['Major_Genre'] == genre_input]
     
     #Condition to have data between those years
-    k = (k[(k['Release_Date'] > year_info[0]) & (k['Release_Date'] < year_info[1]) ]
+    k = (k[(k['Release_Date'] >= year_info[0]) & (k['Release_Date'] <= year_info[1]) ]
      .sort_values(by = "Worldwide_Gross",ascending = False))
     k_WW_Gross = k.iloc[0].loc['Worldwide_Gross']/1000000
     k_movie = k.iloc[0].loc['Title']
@@ -391,7 +393,7 @@ def biggest_flop(year_info, genre_input):
         k = df[df['Major_Genre'] == genre_input]
     
     #Condition to have data between those years
-    k = (k[(k['Release_Date'] > year_info[0]) & (k['Release_Date'] < year_info[1]) ])
+    k = (k[(k['Release_Date'] >= year_info[0]) & (k['Release_Date'] <= year_info[1]) ])
     k['Profit'] = k['Worldwide_Gross'] - k['Production_Budget']
     k = k.sort_values(by = "Profit")
     topflopgross = k.iloc[0].loc["Worldwide_Gross"] / 1000000
@@ -428,7 +430,7 @@ def how_big(year_info, genre_input):
         k = df[df['Major_Genre'] == genre_input]
     
     #Condition to have data between those years
-    k = k[(k['Release_Date'] > year_info[0]) & (k['Release_Date'] < year_info[1]) ]
+    k = k[(k['Release_Date'] >= year_info[0]) & (k['Release_Date'] <= year_info[1]) ]
     average_returns = round(np.sum(k['Worldwide_Gross'] - k['Production_Budget'])/1000000000,2)
     return ("The total worldwide box office of genre type " + genre_input + " over the years " 
             + str(year_info[0]) + '-' + str(year_info[1]) 
@@ -462,7 +464,7 @@ def average_returns(year_info, genre_input):
         k = df[df['Major_Genre'] == genre_input]
     
     #Condition to have data between those years
-    k = k[(k['Release_Date'] > year_info[0]) & (k['Release_Date'] < year_info[1]) ]
+    k = k[(k['Release_Date'] >= year_info[0]) & (k['Release_Date'] <= year_info[1]) ]
     average_returns = round(np.mean(k['Worldwide_Gross'] - k['Production_Budget'])/1000000,2)
     return ("The average return on investment of genre type " + genre_input + " over the years " 
             + str(year_info[0]) + '-' + str(year_info[1]) 
