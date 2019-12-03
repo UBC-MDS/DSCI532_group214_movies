@@ -20,8 +20,6 @@ df['Release_Date'] =  pd.to_datetime(df['Release_Date'], infer_datetime_format=T
 df['Release_Date'] = df['Release_Date'].dt.year
 
 def make_barchart(
-    # x_axis='US_Gross:Q',
-            #   y_axis='US_Gross:Q',
               year_slider = [1950, 2000],
               genre = "Comedy"):
 
@@ -55,8 +53,6 @@ def make_barchart(
 
 
 def make_heatmap(
-    # x_axis='US_Gross:Q',
-            #   y_axis='US_Gross:Q',
               year_slider = [1950, 2000],
               genre = "Comedy"):
 
@@ -156,29 +152,26 @@ jumbotron = dbc.Jumbotron(
     
     
 content = dbc.Container(
-    [dbc.Row([
-            dbc.Col(    ## Top row with filters
-                    [
-                    #dbc.Row([   ## First row of first column, contains dropdown
-        
-        
-   
-            dbc.Row(      [  
-                    dbc.Col([
+    [dbc.Row([                                      ## Top row with filters
+        dbc.Col([                                   ## Column containing the two mini-rows in the top row
+                
+                          
+        dbc.Row([                                   ## Row for the range slider
+            dbc.Col([                               ## Column for the range slider
         dcc.RangeSlider(
             id='year_slider',
             min=1930,
             max=2010,
             marks={i: '{}'.format(i) for i in range(1930, 2010, 5)},
             value=[1950, 2000]
-        ),
+                    ),
         html.Div("\n\n")
         
             ], width=12,
-            style={'white-space':'pre-line'})
+            style={'white-space':'pre-line'})       ## Allows use of newline character (\n)
             ]),
 
-        dbc.Row(
+        dbc.Row(                                    ## Row with dropdown filter
 
         dcc.Dropdown(
         id='genre_choice',
@@ -194,30 +187,18 @@ content = dbc.Container(
             {'label': 'RomCom', 'value': 'Romantic Comedy'},
             {'label': 'Thriller', 'value': 'Thriller/Suspense'},
             {'label': 'Western', 'value': 'Western'}
-        ],
+                ],
         value='Action',
         clearable=False,
-        #placeholder="Please choose a genre",
         style={'width':'100%', 'justify':'start'}
-        )
-        ),
-        
-            
-            
-            
-                    ]
-                    
-            
+                )
             ),
-        #)
-         #             )              ## End column1, row2
-        #], 
-        #,    ## End of first column
-    ]),
-        dbc.Row([                       ## Second (main) row  with all graphs
-            dbc.Col(                      ## First column with barchart and heatmap
-                    [
-                        dbc.Row([           ## Row with barchart
+                ] 
+            ),
+        ]),
+        dbc.Row([                                   ## Second (main) row  with all graphs
+            dbc.Col(                                ## First column with barchart and heatmap
+                [dbc.Row([                          ## Row with barchart
         
         html.Iframe(
             sandbox='allow-scripts',
@@ -226,11 +207,10 @@ content = dbc.Container(
             width=575,
             style={'border-width': '0'},
             srcDoc=make_barchart().to_html()
-            )
-            ]
-            ),
+                )
+                        ]),
 
-                        dbc.Row([       ## Row with heatmap
+                dbc.Row([                           ## Row with heatmap
         
         html.Iframe(
             sandbox='allow-scripts',
@@ -239,16 +219,14 @@ content = dbc.Container(
             width=550,
             style={'border-width': '0'},
             srcDoc=make_heatmap().to_html()
-            ) 
-            ]
-            )
-                    ], width=6      
-                ),          ## End column1
+                    ) 
+                        ])
+                ], width=6      
+            ),                                      ## End column1
 
-        
-         dbc.Col(               ## Col with hist and summary stats
+        dbc.Col(                                    ## Col with hist and summary stats
              [
-                 dbc.Row(
+            dbc.Row(                                ## Row with highlighted histogram
             html.Iframe(
             sandbox='allow-scripts',
             id='plot3',
@@ -256,9 +234,10 @@ content = dbc.Container(
             width=450,
             style={'border-width': '0'},
             srcDoc=make_highlight_hist().to_html()
-            )
-                 ),
-        dbc.Row([
+                )
+            ),
+
+        dbc.Row([                               ## Row with summary stats
             dbc.Row([html.Div("______________________________________________________")]),
 			dbc.Row([html.Div(id = "text1")]),
 			dbc.Row([html.Div("______________________________________________________")]),
@@ -269,13 +248,12 @@ content = dbc.Container(
 			dbc.Row([html.Div(id = "text4")]),
              ])
 			
-             ], width=6     
-             )              ## End column2
-            ],             ## End second row
-    )
-        ]
-        
-)                           ## End container
+             ], width=6                         ## End summary stats row
+             )                                  ## End column2 of main body
+            ],                                  ## End second main row
+        )
+    ]
+)                                               ## End container
 
     
 
