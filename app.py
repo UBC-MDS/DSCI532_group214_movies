@@ -9,7 +9,7 @@ import numpy as np
 from vega_datasets import data
 import dash_bootstrap_components as dbc
 
-app = dash.Dash(__name__, assets_folder='assets', assets_external_path='')
+app = dash.Dash(__name__, assets_folder='assets', external_stylesheets=[dbc.themes.BOOTSTRAP])
 app.config['suppress_callback_exceptions'] = True
 
 server = app.server
