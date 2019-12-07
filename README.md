@@ -8,3 +8,4 @@ The design of the dashboard is inspired by the need to provide direction to the 
 
 [Main repo](https://github.com/UBC-MDS/DSCI532_group214_movies/tree/2bfb401e38ec127e67a44febf659175523466aec)
 
+[Link to app](https://app-milestone3.herokuapp.com/)
