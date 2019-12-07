@@ -9,7 +9,7 @@ import numpy as np
 from vega_datasets import data
 import dash_bootstrap_components as dbc
 
-app = dash.Dash(__name__, assets_folder='assets', external_stylesheets=[dbc.themes.CERULEAN])
+app = dash.Dash(__name__, assets_folder='assets', assets_external_path='')
 app.config['suppress_callback_exceptions'] = True
 
 server = app.server
@@ -28,7 +28,7 @@ def make_barchart(
         )
 
 
-    barchart = alt.Chart(df).mark_bar().transform_calculate(
+    barchart = alt.Chart(df).mark_area().transform_calculate(
         Release_Year = "year(datum.Release_Date)",
         International_Gross = "datum.Worldwide_Gross - datum.US_Gross"
     ).transform_filter(
@@ -42,7 +42,7 @@ def make_barchart(
     ).encode(
         alt.Y('value:Q', aggregate = "mean", axis=alt.Axis(title='Dollars')),
         alt.X('Release_Year:O', axis=alt.Axis(title='Year')),
-        color = alt.Color("key:N", legend=alt.Legend(orient="bottom"))
+        color = alt.Color("key:N", legend=alt.Legend(orient="bottom"), scale = alt.Scale(scheme='yelloworangebrown'))
     ).properties(
         title = "Average Gross",
         height = 300,
@@ -75,9 +75,10 @@ def make_heatmap(
     ).transform_filter(
         alt.datum.Major_Genre == genre
     ).encode(
-        alt.X('IMDB_Rating:Q', bin = alt.Bin(maxbins = 50), axis = alt.Axis(title = 'IMDB Rating')),
-        alt.Y('Profit_Ratio:Q', bin = alt.Bin(maxbins = 50), axis = alt.Axis(title = 'Profit Ratio ((Gross - Budget)/Budget)')),
-        alt.Color('count(Profit_Ratio):Q', scale=alt.Scale(scheme='greenblue'), legend=alt.Legend(orient="bottom"))
+        alt.X('IMDB_Rating:Q', bin = alt.Bin(maxbins = 20), axis = alt.Axis(title = 'IMDB Rating')),
+        alt.Y('Profit_Ratio:Q', bin = alt.Bin(maxbins = 20), axis = alt.Axis(title = 'Profit Ratio ((Gross - Budget)/Budget)')),
+        alt.Color('mean(Profit_Ratio):Q', scale=alt.Scale(scheme='yelloworangebrown'), legend=alt.Legend(orient="bottom")),
+        tooltip = ['Title:N']
     ).properties(
         title = "Average Gross",
         height = 300,
@@ -98,11 +99,11 @@ def make_highlight_hist(year_slider = [1950, 2000],
         Release_Year = "year(datum.Release_Date)",
         International_Gross = "datum.Worldwide_Gross - datum.US_Gross"
     ).transform_filter(
-        alt.datum.Release_Year < year_slider[1]
+        alt.datum.Release_Year <= year_slider[1]
     ).transform_filter(
         alt.datum.Major_Genre != None
     ).transform_filter(
-        alt.datum.Release_Year > year_slider[0]
+        alt.datum.Release_Year >= year_slider[0]
     ).encode(
         alt.Y('Major_Genre:N', 
             axis=alt.Axis(title='Genre')),
@@ -124,31 +125,12 @@ jumbotron = dbc.Jumbotron(
         dbc.Container(
             [ dbc.Row([html.Img(src='https://i.imgur.com/N2UOAry.jpg',
                        width='200px'),
-                html.H1("Interactive Movie Dashboard", className="display-3")]),
-                dbc.Col([
-            dbc.Row([html.Div("___________________________")]),
-            dbc.Row([html.Div("If you are nascent to investing in the movie industry, your search ends right here! As a new investor, there are 4 fundamental questions you must know to estimate what your money is worth.")]),
-            dbc.Row([html.Div("1. What genre has been most profitable?")]),
-            dbc.Row([html.Div("2. How much does audience reception affect profit?  ")]),
-            dbc.Row([html.Div("3. What are the most and least popular genres that producers typically engage in? ")]),
-            dbc.Row([html.Div("___________________________")]),
-            dbc.Row([html.Div("Welcome to our Interactive Movie Dashboard! It is quite simple and involves understanding 2 levers which will make your exploration fun and insightful.")]),
-            dbc.Row([html.Div("1. Use the slider to observe the evolution of the industry over the select time period.")]),
-            dbc.Row([html.Div("2. Use the drop down menu to look up the top XX genres")]),
-             ]),
-            ],
-            fluid=True,
+                html.H2("Interactive Movie Dashboard", className="display-3")]
+        )]
         )
-    ],
-    fluid=True,
+    ]
 )
 
-
-
-    ### ADD CONTENT HERE like: html.H1('text'),
-    # html.H1('Interactive Movie Database'),
-    # html.H3('Box Office Performance Based on Genre'),
-    # html.H3('Here is our first plot:'),
     
     
 content = dbc.Container(
@@ -231,26 +213,32 @@ content = dbc.Container(
             sandbox='allow-scripts',
             id='plot3',
             height=450,
-            width=450,
+            width=500,
             style={'border-width': '0'},
             srcDoc=make_highlight_hist().to_html()
                 )
             ),
 
         dbc.Row([                               ## Row with summary stats
-            dbc.Row([html.Div("______________________________________________________")]),
+            dbc.Col([
+            dbc.Row([html.Div(html.H3("Summary"))]),
 			dbc.Row([html.Div(id = "text1")]),
-			dbc.Row([html.Div("______________________________________________________")]),
+			#dbc.Row([html.Div("\n\n\n")]),
 			dbc.Row([html.Div(id = "text2")]),
-			dbc.Row([html.Div("______________________________________________________  ")]),
+			#dbc.Row([html.Div("______________________________________________________  ")]),
 			dbc.Row([html.Div(id = "text3")]),
-			dbc.Row([html.Div("______________________________________________________  ")]),
-			dbc.Row([html.Div(id = "text4")]),
-             ])
+			#dbc.Row([html.Div("______________________________________________________  ")]),
+			dbc.Row([html.Div(id = "text4")])
+            ]),
+             ], justify='left')
 			
-             ], width=6                         ## End summary stats row
-             )                                  ## End column2 of main body
-            ],                                  ## End second main row
+             ], width=6,
+                style={'white-space':'pre-line', 'font-family':'impact'},
+                
+                
+                )       ## End summary stats row
+                                               ## End column2 of main body
+            ],                               ## End second main row
         )
     ]
 )                                               ## End container
@@ -258,13 +246,48 @@ content = dbc.Container(
     
 
        
-footer = dbc.Container([dbc.Row(dbc.Col(html.P('This Dash app was made collaboratively by Team 214: Vignesh, James, and Matt'))),
-         ])
+footer = dbc.Container([
+    dbc.Row(
+        dbc.Col(
+            html.P('This Dash app was made collaboratively by Team 214: Vignesh Chandrasekaran, James Huang, and Matthew Connell')
+            )
+        ),
+    ])
         
-        
-app.layout = html.Div([jumbotron,
-                       content,
-                       footer])
+
+tab1_content=([
+        html.Div([
+        content,
+        footer])
+    ])
+
+tab2_content=([
+        dbc.Row([
+                dbc.Col([
+            html.Div(html.H3("Who should use this app?")),
+            html.Div("If you are nascent to investing in the movie industry, your search ends right here! As a new investor, there are 4 fundamental questions you must know to estimate what your money is worth."),
+            html.Div("1. What genre has been most profitable?"),
+            html.Div("2. How much does audience reception affect profit?  "),
+            html.Div("3. What are the most and least popular genres that producers typically engage in? "),
+            html.Div(html.H3("How to use this app")),
+            html.Div("It is quite simple and involves understanding 2 levers which will make your exploration fun and insightful."),
+            html.Div("1. Use the slider to observe the evolution of the industry over the select time period."),
+            html.Div("2. Use the drop down menu to look up the top XX genres")
+             ], 
+             width=6,
+             style={'justify': 'center', 'font-family':'helvetica', 'white-space':'pre-line'}),
+        ], justify='center')
+    ])
+
+
+
+tabs = dbc.Tabs([
+    dbc.Tab(tab1_content, label = "Graphs"),
+    dbc.Tab(tab2_content, label="Documentation"),
+    ])
+
+app.layout=html.Div([jumbotron,
+            tabs])
 
 @app.callback(
     dash.dependencies.Output('barchart', 'srcDoc'),
@@ -337,11 +360,11 @@ def biggest_success(year_info, genre_input):
         k = df[df['Major_Genre'] == genre_input]
     
     #Condition to have data between those years
-    k = (k[(k['Release_Date'] > year_info[0]) & (k['Release_Date'] < year_info[1]) ]
+    k = (k[(k['Release_Date'] >= year_info[0]) & (k['Release_Date'] <= year_info[1]) ]
      .sort_values(by = "Worldwide_Gross",ascending = False))
     k_WW_Gross = k.iloc[0].loc['Worldwide_Gross']/1000000
     k_movie = k.iloc[0].loc['Title']
-    return "The highest worldwide box office of genre type "  + genre_input + " over the years " + str(year_info[0]) + '-' + str(year_info[1])  + " was " + k_movie + " grossing " + str(round(k_WW_Gross, 2)) + " Million USD"
+    return (" ======== " + genre_input + " Movies from " + str(year_info[0]) + ' to ' + str(year_info[1])  + " ======== \nTop Grossing Film: " + k_movie + "\nBox Office returns: $" + str(round(k_WW_Gross, 2)) + "M")
 
 
 @app.callback(
@@ -369,15 +392,14 @@ def biggest_flop(year_info, genre_input):
         k = df[df['Major_Genre'] == genre_input]
     
     #Condition to have data between those years
-    k = (k[(k['Release_Date'] > year_info[0]) & (k['Release_Date'] < year_info[1]) ])
+    k = (k[(k['Release_Date'] >= year_info[0]) & (k['Release_Date'] <= year_info[1]) ])
     k['Profit'] = k['Worldwide_Gross'] - k['Production_Budget']
     k = k.sort_values(by = "Profit")
     topflopgross = k.iloc[0].loc["Worldwide_Gross"] / 1000000
     topflopgross = round(topflopgross, 2)
     topflopname = k.iloc[0].loc["Title"]
     topflopbudget = k.iloc[0].loc["Production_Budget"] / 1000000
-    b = "The biggest flop of genre type " + genre_input + " over the years " + str(year_info[0]) + '-' + str(year_info[1])  + " was "+topflopname + " with a box office of " + str(topflopgross) + " Million USD against a budget of " + str(topflopbudget) + " Million USD"
-    return b
+    return (" ============== Biggest flop ============== " + "\nTitle: " + topflopname + "\nBox Office: $" + str(topflopgross) + "M\nBudget: $" + str(topflopbudget) + "M")
 
 @app.callback(
      dash.dependencies.Output('text3', 'children'),
@@ -408,9 +430,7 @@ def how_big(year_info, genre_input):
     #Condition to have data between those years
     k = k[(k['Release_Date'] > year_info[0]) & (k['Release_Date'] < year_info[1]) ]
     average_returns = round(np.sum(k['Worldwide_Gross'] - k['Production_Budget'])/1000000000,2)
-    return ("The total worldwide box office of genre type " + genre_input + " over the years " 
-            + str(year_info[0]) + '-' + str(year_info[1]) 
-            + ' was ' + str(average_returns) + " Billion USD" )
+    return ("=========== Total =========== " + "\nWorldwide box office: $" + str(average_returns) + "B" )
 
 @app.callback(
      dash.dependencies.Output('text4', 'children'),
@@ -442,9 +462,7 @@ def average_returns(year_info, genre_input):
     #Condition to have data between those years
     k = k[(k['Release_Date'] > year_info[0]) & (k['Release_Date'] < year_info[1]) ]
     average_returns = round(np.mean(k['Worldwide_Gross'] - k['Production_Budget'])/1000000,2)
-    return ("The average return on investment of genre type " + genre_input + " over the years " 
-            + str(year_info[0]) + '-' + str(year_info[1]) 
-            + ' was ' + str(average_returns) + " Million USD" )
+    return ("Average return on investment: $" + str(average_returns) + "M" )
 
 
 # @app.callback(
