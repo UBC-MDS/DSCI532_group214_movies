@@ -321,8 +321,18 @@ tab2_content=([
             html.Div("3. What are the popularity levels of genres that typically produced? "),
             html.Div(html.H3("How to use this app:")),
             html.Div("1. Use the slider to observe the performance of the industry over the selected years."),
-            html.Div("2. Use the drop down menu to filter on genre")
-             ], 
+            html.Div("2. Use the drop down menu to filter on genre"),
+            html.Div(
+                dcc.Markdown('''
+            [Data Source](https://github.com/vega/vega-datasets/blob/master/data/movies.json)
+                        
+            [Github Repo for this app](https://github.com/UBC-MDS/DSCI532_group214_movies)
+
+            '''
+                )
+            )
+                ],
+              
              width=6,
              style={'justify': 'center', 'font-family':'helvetica', 'white-space':'pre-line'}),
         ], justify='center')
