@@ -9,7 +9,7 @@ import numpy as np
 from vega_datasets import data
 import dash_bootstrap_components as dbc
 
-app = dash.Dash(__name__, assets_folder='assets', external_stylesheets=[dbc.themes.CERULEAN])
+app = dash.Dash(__name__, assets_folder='assets', assets_external_path='')
 app.config['suppress_callback_exceptions'] = True
 
 server = app.server
@@ -233,7 +233,9 @@ content = dbc.Container(
              ], justify='left')
 			
              ], width=6,
-                style={'white-space':'pre-line', 'font-family':'times'}
+                style={'white-space':'pre-line', 'font-family':'impact'},
+                
+                
                 )       ## End summary stats row
                                                ## End column2 of main body
             ],                               ## End second main row
@@ -260,25 +262,27 @@ tab1_content=([
     ])
 
 tab2_content=([
-
+        dbc.Row([
                 dbc.Col([
-            dbc.Row([html.Div("___________________________")]),
-            dbc.Row([html.Div("If you are nascent to investing in the movie industry, your search ends right here! As a new investor, there are 4 fundamental questions you must know to estimate what your money is worth.")]),
-            dbc.Row([html.Div("1. What genre has been most profitable?")]),
-            dbc.Row([html.Div("2. How much does audience reception affect profit?  ")]),
-            dbc.Row([html.Div("3. What are the most and least popular genres that producers typically engage in? ")]),
-            dbc.Row([html.Div("___________________________")]),
-            dbc.Row([html.Div("Welcome to our Interactive Movie Dashboard! It is quite simple and involves understanding 2 levers which will make your exploration fun and insightful.")]),
-            dbc.Row([html.Div("1. Use the slider to observe the evolution of the industry over the select time period.")]),
-            dbc.Row([html.Div("2. Use the drop down menu to look up the top XX genres")]),
-             ]),
-
+            html.Div(html.H3("Who should use this app?")),
+            html.Div("If you are nascent to investing in the movie industry, your search ends right here! As a new investor, there are 4 fundamental questions you must know to estimate what your money is worth."),
+            html.Div("1. What genre has been most profitable?"),
+            html.Div("2. How much does audience reception affect profit?  "),
+            html.Div("3. What are the most and least popular genres that producers typically engage in? "),
+            html.Div(html.H3("How to use this app")),
+            html.Div("It is quite simple and involves understanding 2 levers which will make your exploration fun and insightful."),
+            html.Div("1. Use the slider to observe the evolution of the industry over the select time period."),
+            html.Div("2. Use the drop down menu to look up the top XX genres")
+             ], 
+             width=6,
+             style={'justify': 'center', 'font-family':'helvetica', 'white-space':'pre-line'}),
+        ], justify='center')
     ])
 
 
 
 tabs = dbc.Tabs([
-    dbc.Tab(tab1_content, label = "Tabb 1"),
+    dbc.Tab(tab1_content, label = "Graphs"),
     dbc.Tab(tab2_content, label="Documentation"),
     ])
 
