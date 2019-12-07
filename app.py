@@ -19,16 +19,33 @@ df = pd.read_json('https://raw.githubusercontent.com/vega/vega-datasets/master/d
 df['Release_Date'] =  pd.to_datetime(df['Release_Date'], infer_datetime_format=True)
 df['Release_Date'] = df['Release_Date'].dt.year
 
-def make_barchart(
+def make_areachart(
               year_slider = [1950, 2000],
               genre = "Comedy"):
+    '''
+    Takes in a year range and genre and filters with the criteria 
+    to create our Altair figure
+
+    An area chart of box office of movies of selected genre in selected year range
+    with domestic and international data
+    
+    Inputs :
+        year_info : List with 2 values, takes in the year information from the callback above
+                    [1970,1985]
+        genre_input : (To be programmed) : takes in the genre information
+                    'Drama', 'Any'
+    
+    Returns
+        A area chart Altair object      
+    
+    '''
 
     df = alt.UrlData(
         data.movies.url
         )
 
 
-    barchart = alt.Chart(df).mark_area().transform_calculate(
+    areachart = alt.Chart(df).mark_area().transform_calculate(
         Release_Year = "year(datum.Release_Date)",
         International_Gross = "datum.Worldwide_Gross - datum.US_Gross"
     ).transform_filter(
@@ -49,12 +66,29 @@ def make_barchart(
         width = 300
     )
 
-    return barchart
+    return areachart
 
 
 def make_heatmap(
               year_slider = [1950, 2000],
               genre = "Comedy"):
+
+    '''
+    Takes in a year range and genre and filters with the criteria 
+    to create our Altair figure
+
+    A heatmap of box office profit ratio against IMDb ratings
+    
+    Inputs :
+        year_info : List with 2 values, takes in the year information from the callback above
+                    [1970,1985]
+        genre_input : (To be programmed) : takes in the genre information
+                    'Drama', 'Any'
+    
+    Returns
+        A heatmap Altair object      
+    
+    '''
 
     df = alt.UrlData(
         data.movies.url
@@ -80,7 +114,7 @@ def make_heatmap(
         alt.Color('mean(Profit_Ratio):Q', scale=alt.Scale(scheme='yelloworangebrown'), legend=alt.Legend(orient="bottom")),
         tooltip = ['Title:N']
     ).properties(
-        title = "Average Gross",
+        title = "Profit Ratio against IMDb Ratings",
         height = 300,
         width = 300
     )
@@ -89,6 +123,22 @@ def make_heatmap(
 
 def make_highlight_hist(year_slider = [1950, 2000],
                 genre = "Comedy"):
+    '''
+    Takes in a year range and genre and filters with the criteria 
+    to create our Altair figure
+
+    A highlighted histogram of counts of movies of different genres
+    
+    Inputs :
+        year_info : List with 2 values, takes in the year information from the callback above
+                    [1970,1985]
+        genre_input : (To be programmed) : takes in the genre information
+                    'Drama', 'Any'
+    
+    Returns
+        A histogram Altair object      
+    
+    '''
 
     df = alt.UrlData(
         data.movies.url
@@ -184,11 +234,11 @@ content = dbc.Container(
         
         html.Iframe(
             sandbox='allow-scripts',
-            id='barchart',
+            id='areachart',
             height=450,
             width=575,
             style={'border-width': '0'},
-            srcDoc=make_barchart().to_html()
+            srcDoc=make_areachart().to_html()
                 )
                         ]),
 
@@ -265,14 +315,13 @@ tab2_content=([
         dbc.Row([
                 dbc.Col([
             html.Div(html.H3("Who should use this app?")),
-            html.Div("If you are nascent to investing in the movie industry, your search ends right here! As a new investor, there are 4 fundamental questions you must know to estimate what your money is worth."),
+            html.Div("If you are nascent to investing in the movie industry, your search ends right here! As a new investor, there are several fundamental questions you would like answered:"),
             html.Div("1. What genre has been most profitable?"),
             html.Div("2. How much does audience reception affect profit?  "),
-            html.Div("3. What are the most and least popular genres that producers typically engage in? "),
-            html.Div(html.H3("How to use this app")),
-            html.Div("It is quite simple and involves understanding 2 levers which will make your exploration fun and insightful."),
-            html.Div("1. Use the slider to observe the evolution of the industry over the select time period."),
-            html.Div("2. Use the drop down menu to look up the top XX genres")
+            html.Div("3. What are the popularity levels of genres that typically produced? "),
+            html.Div(html.H3("How to use this app:")),
+            html.Div("1. Use the slider to observe the performance of the industry over the selected years."),
+            html.Div("2. Use the drop down menu to filter on genre")
              ], 
              width=6,
              style={'justify': 'center', 'font-family':'helvetica', 'white-space':'pre-line'}),
@@ -290,17 +339,27 @@ app.layout=html.Div([jumbotron,
             tabs])
 
 @app.callback(
-    dash.dependencies.Output('barchart', 'srcDoc'),
+    dash.dependencies.Output('areachart', 'srcDoc'),
     [
      dash.dependencies.Input('year_slider','value'),
      dash.dependencies.Input('genre_choice','value')])
-def update_barchart(
+def update_areachart(
                 year_slider,
                 genre_choice):
     '''
-    Takes in an xaxis_column_name and calls make_plot to update our Altair figure
+    Takes in a year range and genre and calls make_plot to update our Altair figure
+    
+    Inputs :
+        year_info : List with 2 values, takes in the year information from the callback above
+                    [1970,1985]
+        genre_input : (To be programmed) : takes in the genre information
+                    'Drama', 'Any'
+    
+    Returns
+        A areachart html object      
+    
     '''
-    updated_plot = make_barchart(
+    updated_plot = make_areachart(
                              year_slider,
                              genre_choice).to_html()
     return updated_plot
@@ -314,7 +373,17 @@ def update_heatmap(
                 year_slider,
                 genre_choice):
     '''
-    Takes in an xaxis_column_name and calls make_plot to update our Altair figure
+    Takes in a year range and genre and calls make_plot to update our Altair figure
+    
+    Inputs :
+        year_info : List with 2 values, takes in the year information from the callback above
+                    [1970,1985]
+        genre_input : (To be programmed) : takes in the genre information
+                    'Drama', 'Any'
+    
+    Returns
+        A heatmap html object      
+    
     '''
     updated_plot2 = make_heatmap(
         year_slider,
@@ -328,7 +397,17 @@ def update_heatmap(
 def update_plot3(year_slider,
                 genre_choice):
     '''
-    Takes in an xaxis_column_name and calls make_plot to update our Altair figure
+    Takes in a year range and genre and calls make_plot to update our Altair figure
+    
+    Inputs :
+        year_info : List with 2 values, takes in the year information from the callback above
+                    [1970,1985]
+        genre_input : (To be programmed) : takes in the genre information
+                    'Drama', 'Any'
+    
+    Returns
+        A histogram html object      
+    
     '''
     updated_plot3 = make_highlight_hist(year_slider,
                              genre_choice
@@ -340,19 +419,17 @@ def update_plot3(year_slider,
      [dash.dependencies.Input('year_slider','value'),
      dash.dependencies.Input('genre_choice','value')])    
 def biggest_success(year_info, genre_input):
-    '''This function gives you the highest WW grossing movie and the amount.
+    ''''This function returns the greatest box office from the movies dataset based on filtering inputs, 
+        formatted to help create an info table
     
     Inputs :
         year_info : List with 2 values, takes in the year information from the callback above
                     [1970,1985]
-        genre_input : (To be programmed) : takes in the genre information
+        genre_input : (To be programmed) : takes in the genre information from the callback above
                     'Drama', 'Any'
-    
     Returns
-        A string (see example)
-    
-    Example
-        'The most succesful movie was Titanic at a worldwide gross of 797.9 Million USD'        
+        A specifically formatted string
+          
     
     '''
     #Condition to wrangle based on 'Any' genre
@@ -373,7 +450,8 @@ def biggest_success(year_info, genre_input):
      dash.dependencies.Input('genre_choice','value')])  
 
 def biggest_flop(year_info, genre_input):
-    '''This function gives you the biggest flop from the movies dataset.
+    '''''This function returns the biggest box office flop from the movies dataset based on filtering inputs, 
+        formatted to help create an info table
     
     Inputs :
         year_info : List with 2 values, takes in the year information from the callback above
@@ -381,10 +459,8 @@ def biggest_flop(year_info, genre_input):
         genre_input : (To be programmed) : takes in the genre information from the callback above
                     'Drama', 'Any'
     Returns
-        A string (see example)
-    
-    Example
-        'The biggest worldwide flop was Men of War'
+        A specifically formatted string
+          
     
     '''
     #Condition to wrangle based on 'Any' genre
@@ -407,20 +483,17 @@ def biggest_flop(year_info, genre_input):
      dash.dependencies.Input('genre_choice','value')])  
 
 def how_big(year_info, genre_input):
-    '''This function gives you an estimate of how big the movie industry 
-        was in that period for that genre
+    ''''This function returns the total box office from the movies dataset based on filtering inputs, 
+        formatted to help create an info table
     
     Inputs :
         year_info : List with 2 values, takes in the year information from the callback above
                     [1970,1985]
-        genre_input : (To be programmed) : takes in the genre information
+        genre_input : (To be programmed) : takes in the genre information from the callback above
                     'Drama', 'Any'
-    
     Returns
-        A string (see example)
-    
-    Example
-        ''The average return on investment during the period 1970-2000 was 56.73 Million USD'        
+        A specifically formatted string
+          
     
     '''
     #Condition to wrangle based on 'Any' genre
@@ -438,23 +511,19 @@ def how_big(year_info, genre_input):
      dash.dependencies.Input('genre_choice','value')])  
 
 def average_returns(year_info, genre_input):
-    '''This function gives you the average return on investment during the period.
+    ''''This function returns average total box office from the movies dataset based on filtering inputs, 
+        formatted to help create an info table
     
     Inputs :
         year_info : List with 2 values, takes in the year information from the callback above
                     [1970,1985]
-        genre_input : (To be programmed) : takes in the genre information
+        genre_input : (To be programmed) : takes in the genre information from the callback above
                     'Drama', 'Any'
-    
     Returns
-        A string (see example)
+        A specifically formatted string
+          
     
-    Example
-        ''The average return on investment during the period 1970-2000 was 56.73 Million USD'        
- 
-   
     '''
-    
     #Condition to wrangle based on 'Any' genre
     if genre_input != 'Any': 
         k = df[df['Major_Genre'] == genre_input]
