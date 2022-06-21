@@ -1,5 +1,5 @@
 dash==1.6.1
-numpy==1.17.2
+numpy==1.22.0
 pandas==0.25.3
 altair==3.2.0
 vega_datasets==0.7.0
